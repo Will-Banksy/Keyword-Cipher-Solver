@@ -172,27 +172,27 @@ public class AlphabetDialog extends JDialog {
 				{
 					case MOST_COMMON:
 						nthCommon = NthCommon.SECOND_MOST_COMMON;
-						String mcLetters_0 = main.getMostCommonStrings(list, 1, nthCommon);
-						String mcBigrams_0 = main.getMostCommonStrings(list, 2, nthCommon);
-						String mcTrigrams_0 = main.getMostCommonStrings(list, 3, nthCommon);
+						String mcLetters_0 = main.getMostCommonStrings(main.units, 1, nthCommon);
+						String mcBigrams_0 = main.getMostCommonStrings(main.units, 2, nthCommon);
+						String mcTrigrams_0 = main.getMostCommonStrings(main.units, 3, nthCommon);
 						nthCommonCounts.setText("Second Most Common Letters: " + mcLetters_0.toUpperCase() + "  Second Most Common Bigrams: " + mcBigrams_0.toUpperCase() + "  Second Most Common Trigrams: " + mcTrigrams_0.toUpperCase());
 						nthCommonCounts.repaint();
 						break;
 						
 					case SECOND_MOST_COMMON:
 						nthCommon = NthCommon.THIRD_MOST_COMMON;
-						String mcLetters_1 = main.getMostCommonStrings(list, 1, nthCommon);
-						String mcBigrams_1 = main.getMostCommonStrings(list, 2, nthCommon);
-						String mcTrigrams_1 = main.getMostCommonStrings(list, 3, nthCommon);
+						String mcLetters_1 = main.getMostCommonStrings(main.units, 1, nthCommon);
+						String mcBigrams_1 = main.getMostCommonStrings(main.units, 2, nthCommon);
+						String mcTrigrams_1 = main.getMostCommonStrings(main.units, 3, nthCommon);
 						nthCommonCounts.setText("Third Most Common Letters: " + mcLetters_1.toUpperCase() + "  Third Most Common Bigrams: " + mcBigrams_1.toUpperCase() + "  Third Most Common Trigrams: " + mcTrigrams_1.toUpperCase());
 						nthCommonCounts.repaint();
 						break;
 						
 					case THIRD_MOST_COMMON:
 						nthCommon = NthCommon.MOST_COMMON;
-						String mcLetters = main.getMostCommonStrings(list, 1, nthCommon);
-						String mcBigrams = main.getMostCommonStrings(list, 2, nthCommon);
-						String mcTrigrams = main.getMostCommonStrings(list, 3, nthCommon);
+						String mcLetters = main.getMostCommonStrings(main.units, 1, nthCommon);
+						String mcBigrams = main.getMostCommonStrings(main.units, 2, nthCommon);
+						String mcTrigrams = main.getMostCommonStrings(main.units, 3, nthCommon);
 						nthCommonCounts.setText("Most Common Letters: " + mcLetters.toUpperCase() + "  Most Common Bigrams: " + mcBigrams.toUpperCase() + "  Most Common Trigrams: " + mcTrigrams.toUpperCase());
 						nthCommonCounts.repaint();
 						break;
