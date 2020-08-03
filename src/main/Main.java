@@ -48,7 +48,7 @@ public class Main
 	{
 		try
 		{
-			if(dictionary != null)
+			if(dictionary == null)
 				dictionary = getResourceFileAsString("Dictionary.txt").split("\n");
 		}
 		catch (IOException e)
