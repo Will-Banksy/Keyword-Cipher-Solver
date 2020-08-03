@@ -14,9 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-@SuppressWarnings("serial")
 public class CryptoUnit extends JPanel
 {
+	private static final long serialVersionUID = 6539788295550882565L;
+	
 	public boolean showSelected;
 	public char ch;
 	public JTextField input;
