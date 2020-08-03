@@ -1,18 +1,13 @@
 package main;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,23 +17,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 public class Main
 {
 	public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 	
-	Frame frame;
+	Frame frame = null;
 	JDialog alphabetEditorDialog = null;
-	ArrayList<CryptoUnit> alphabetUnits = null;
+	AlphabetDialog alphDiag = null;
 	ArrayList<CryptoUnit> units = null;
-	NthCommon nthCommon;
+	NthCommon nthCommon = NthCommon.MOST_COMMON;
 	static String[] dictionary;
 	
 	public enum NthCommon
@@ -57,7 +48,8 @@ public class Main
 	{
 		try
 		{
-			dictionary = getResourceFileAsString("Dictionary.txt").split("\n");
+			if(dictionary != null)
+				dictionary = getResourceFileAsString("Dictionary.txt").split("\n");
 		}
 		catch (IOException e)
 		{
@@ -66,42 +58,9 @@ public class Main
 		
 		frame = new Frame();
 		frame.setup(this);
-//		frame.setTitle("Cryptogram");
-//		frame.setSize(400, 400);
-//		frame.setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
-//		frame.setMinimumSize(new Dimension(400, 400));
-		
-//		JDialog textInputDialog = new JDialog(frame);
-//		textInputDialog.setTitle("Enter Text");
-//		textInputDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-//		textInputDialog.setLocationRelativeTo(frame);
-//		textInputDialog.setSize(400, 400);
-//		textInputDialog.setMinimumSize(new Dimension(400, 400));
-//		
-//		JTextArea textInput = new JTextArea("", 1, 1);
-//		JScrollPane inputOverflow = new JScrollPane(textInput);
-//		textInputDialog.add(inputOverflow, BorderLayout.CENTER);
-//		
-//		JButton submitText = new JButton("Submit");
-//		textInputDialog.add(submitText, BorderLayout.SOUTH);
-//		
-//		submitText.addActionListener(new ActionListener() {
-//			@Override public void actionPerformed(ActionEvent arg0)
-//			{
-//				units = createAndAddUnits(frame, textInput.getText());
-//				textInputDialog.setVisible(false);
-//				frame.pack();
-//				frame.setLocationRelativeTo(null);
-//				frame.revalidate();
-//				showAlphabetEditorDialog(frame, units);
-//			}
-//		});
 		
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		
-//		textInputDialog.setLocation(frame.getLocation());
-//		textInputDialog.setVisible(true);
 	}
 	
 	public ArrayList<CryptoUnit> createAndAddUnits(Frame frame, String text)
@@ -146,9 +105,9 @@ public class Main
 								u.repaint();
 							}
 						}
-						if(alphabetUnits != null)
+						if(alphDiag.alphabetUnits != null)
 						{
-							for(CryptoUnit u : alphabetUnits)
+							for(CryptoUnit u : alphDiag.alphabetUnits)
 							{
 								if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
 								{
@@ -171,9 +130,9 @@ public class Main
 							u.showSelected = false;
 							u.repaint();
 						}
-						if(alphabetUnits != null)
+						if(alphDiag.alphabetUnits != null)
 						{
-							for(CryptoUnit u : alphabetUnits)
+							for(CryptoUnit u : alphDiag.alphabetUnits)
 							{
 								u.showSelected = false;
 								u.repaint();
@@ -203,9 +162,9 @@ public class Main
 								u.input.repaint();
 							}
 						}
-						if(alphabetUnits != null)
+						if(alphDiag.alphabetUnits != null)
 						{
-							for(CryptoUnit u : alphabetUnits)
+							for(CryptoUnit u : alphDiag.alphabetUnits)
 							{
 								if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
 								{
@@ -228,279 +187,6 @@ public class Main
 		frame.cryptoArea.add(pane, BorderLayout.CENTER);
 		
 		return list;
-	}
-	
-	public static boolean isLetter(char character)
-	{
-		for(int i = 0; i < Main.ALPHABET.length(); i++)
-		{
-			if(Main.ALPHABET.charAt(i) == Character.toLowerCase(character))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public void showOutputDialog(Frame parentWindow, String output)
-	{
-		JDialog textOutputDialog = new JDialog(parentWindow);
-		textOutputDialog.setTitle("Output");
-		textOutputDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-		textOutputDialog.setSize(400, 400);
-		textOutputDialog.setMinimumSize(new Dimension(400, 400));
-		
-		JTextArea textOutput = new JTextArea(output, 1, 1);
-		JScrollPane inputOverflow = new JScrollPane(textOutput);
-		textOutputDialog.add(inputOverflow, BorderLayout.CENTER);
-
-		textOutputDialog.setLocationRelativeTo(parentWindow);
-		textOutputDialog.setVisible(true);
-	}
-		
-	public void showAlphabetEditorDialog(Frame parentWindow, ArrayList<CryptoUnit> list, boolean forceRemake)
-	{
-		if(alphabetEditorDialog == null || forceRemake)
-		{
-			if(alphabetEditorDialog == null) {
-				alphabetEditorDialog = new JDialog(parentWindow);
-				alphabetEditorDialog.setTitle("Alphabet");
-				alphabetEditorDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-				alphabetEditorDialog.setSize(400, 400);
-				alphabetEditorDialog.setMinimumSize(new Dimension(400, 400));
-				alphabetEditorDialog.setLayout(new GridBagLayout());
-			}
-			
-			alphabetUnits = new ArrayList<CryptoUnit>();
-			
-			JPanel container = new JPanel();
-			container.setLayout(new GridBagLayout());
-			
-			GridBagConstraints c = new GridBagConstraints();
-			
-			c.gridy = 0;
-			
-			for(int j = 0; j < ALPHABET.length(); j++)
-			{
-				c.gridx = j;
-				c.gridy = 0;
-				CryptoUnit unit = new CryptoUnit(ALPHABET.charAt(j));
-				unit.input.addFocusListener(new FocusListener() {
-					@Override public void focusGained(FocusEvent arg0)
-					{
-						unit.showSelected = true;
-						unit.repaint();
-						for(CryptoUnit u : list)
-						{
-							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-							{
-								u.showSelected = true;
-								u.repaint();
-							}
-							else
-							{
-								u.showSelected = false;
-								u.repaint();
-							}
-						}
-						if(alphabetUnits != null)
-						{
-							for(CryptoUnit u : alphabetUnits)
-							{
-								if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-								{
-									u.showSelected = true;
-									u.repaint();
-								}
-								else
-								{
-									u.showSelected = false;
-									u.repaint();
-								}
-							}
-						}
-					}
-
-					@Override public void focusLost(FocusEvent arg0)
-					{
-						for(CryptoUnit u : list)
-						{
-							u.showSelected = false;
-							u.repaint();
-						}
-						if(alphabetUnits != null)
-						{
-							for(CryptoUnit u : alphabetUnits)
-							{
-								u.showSelected = false;
-								u.repaint();
-							}
-						}
-					}
-				});
-
-				unit.input.setDocument(new JTextFieldLimit(1));
-				unit.input.addKeyListener(new KeyListener()
-				{
-					@Override public void keyPressed(KeyEvent e)
-					{
-					}
-
-					@Override public void keyReleased(KeyEvent e)
-					{
-					}
-
-					@Override public void keyTyped(KeyEvent e)
-					{
-						for(CryptoUnit u : list)
-						{
-							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-							{
-								u.input.setText(e.getKeyChar() + "");
-								u.input.repaint();
-							}
-						}
-						if(alphabetUnits != null)
-						{
-							for(CryptoUnit u : alphabetUnits)
-							{
-								if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-								{
-									u.input.setText(e.getKeyChar() + "");
-									u.input.repaint();
-								}
-							}
-						}
-					}
-				});
-
-				container.add(unit, c);
-				alphabetUnits.add(unit);
-				
-				int counter = 0;
-				for(int i = 0; i < list.size(); i++)
-				{
-					if(Character.toLowerCase(list.get(i).ch) == unit.ch)
-					{
-						counter++;
-					}
-				}
-				
-				JLabel letterCount = new JLabel(String.valueOf(counter));
-				c.gridy = 1;
-				container.add(letterCount, c);
-				
-				letterCount.setToolTipText("Letter Count");
-			}
-			
-			JScrollPane pane = new JScrollPane(container);
-
-			c.gridx = 0;
-			c.gridy = 0;
-			c.fill = GridBagConstraints.BOTH;
-			c.weightx = 1;
-			c.weighty = 1;
-			c.gridwidth = 1;
-			alphabetEditorDialog.add(pane, c);
-			
-			nthCommon = NthCommon.MOST_COMMON;
-			
-			String mcLetters = getMostCommonStrings(list, 1, nthCommon);
-			String mcBigrams = getMostCommonStrings(list, 2, nthCommon);
-			String mcTrigrams = getMostCommonStrings(list, 3, nthCommon);
-			
-			JLabel mostCommon = new JLabel("Most Common Letters: " + mcLetters.toUpperCase() + "  Most Common Bigrams: " + mcBigrams.toUpperCase() + "  Most Common Trigrams: " + mcTrigrams.toUpperCase());
-			
-			mostCommon.addMouseListener(new MouseListener() {
-				@Override public void mouseClicked(MouseEvent arg0)
-				{
-					switch(nthCommon)
-					{
-						case MOST_COMMON:
-							nthCommon = NthCommon.SECOND_MOST_COMMON;
-							String mcLetters_0 = getMostCommonStrings(list, 1, nthCommon);
-							String mcBigrams_0 = getMostCommonStrings(list, 2, nthCommon);
-							String mcTrigrams_0 = getMostCommonStrings(list, 3, nthCommon);
-							mostCommon.setText("Second Most Common Letters: " + mcLetters_0.toUpperCase() + "  Second Most Common Bigrams: " + mcBigrams_0.toUpperCase() + "  Second Most Common Trigrams: " + mcTrigrams_0.toUpperCase());
-							mostCommon.repaint();
-							break;
-							
-						case SECOND_MOST_COMMON:
-							nthCommon = NthCommon.THIRD_MOST_COMMON;
-							String mcLetters_1 = getMostCommonStrings(list, 1, nthCommon);
-							String mcBigrams_1 = getMostCommonStrings(list, 2, nthCommon);
-							String mcTrigrams_1 = getMostCommonStrings(list, 3, nthCommon);
-							mostCommon.setText("Third Most Common Letters: " + mcLetters_1.toUpperCase() + "  Third Most Common Bigrams: " + mcBigrams_1.toUpperCase() + "  Third Most Common Trigrams: " + mcTrigrams_1.toUpperCase());
-							mostCommon.repaint();
-							break;
-							
-						case THIRD_MOST_COMMON:
-							nthCommon = NthCommon.MOST_COMMON;
-							String mcLetters = getMostCommonStrings(list, 1, nthCommon);
-							String mcBigrams = getMostCommonStrings(list, 2, nthCommon);
-							String mcTrigrams = getMostCommonStrings(list, 3, nthCommon);
-							mostCommon.setText("Most Common Letters: " + mcLetters.toUpperCase() + "  Most Common Bigrams: " + mcBigrams.toUpperCase() + "  Most Common Trigrams: " + mcTrigrams.toUpperCase());
-							mostCommon.repaint();
-							break;
-					}
-				}
-
-				@Override public void mouseEntered(MouseEvent arg0)
-				{
-				}
-
-				@Override public void mouseExited(MouseEvent arg0)
-				{
-				}
-
-				@Override public void mousePressed(MouseEvent arg0)
-				{
-				}
-
-				@Override public void mouseReleased(MouseEvent arg0)
-				{
-				}
-			});
-			
-			c.gridy = 1;
-			c.fill = GridBagConstraints.HORIZONTAL;
-			c.weighty = 0;
-			alphabetEditorDialog.add(mostCommon, c);
-			
-			c.gridy = 2;
-			JButton getKeywords = new JButton("Get possible keywords");
-			alphabetEditorDialog.add(getKeywords, c);
-			
-			getKeywords.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(ActionEvent arg0)
-				{
-					ArrayList<String> possibleKeywords = new ArrayList<String>();
-					String cipherAlphabet;
-					StringBuilder sb = new StringBuilder();
-					for(CryptoUnit unit : alphabetUnits)
-					{
-						sb.append(unit.input.getText());
-					}
-					cipherAlphabet = sb.toString().toLowerCase();
-					System.out.println(cipherAlphabet);
-					
-					for(String str : dictionary)
-					{
-						String alph = GetCipherAlphabet(str, false);
-						if(cipherAlphabet.equals(alph))
-						{
-							possibleKeywords.add(str);
-						}
-					}
-					JOptionPane.showMessageDialog(parentWindow, possibleKeywords);
-				}
-			});
-			
-			alphabetEditorDialog.pack();
-			alphabetEditorDialog.setLocationRelativeTo(parentWindow);
-		}
-
-		alphabetEditorDialog.setVisible(true);
 	}
 	
 	public String getMostCommonStrings(ArrayList<CryptoUnit> list, int length, NthCommon type)

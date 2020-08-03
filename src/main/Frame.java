@@ -1,28 +1,25 @@
 package main;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-public class Frame extends JFrame
-{
+public class Frame extends JFrame {
 	private static final long serialVersionUID = 1418976186596179265L;
 	
 	JPanel cryptoArea;
 	JDialog inputDiag;
+	JDialog outputDiag;
+	JTextArea outputTextArea;
 
 	public Frame() throws HeadlessException {
 		super();
@@ -105,21 +102,21 @@ public class Frame extends JFrame
 					sb.append(u.ch);
 				}
 			}
-			main.showOutputDialog(main.frame, sb.toString());
+			showOutputDialog(main, sb.toString());
 		});
 		
 		showAlphabetEditorDialog.addActionListener((actionEvent) -> { // Use lambda - Shorter syntax
 			if(main.units == null)
 				return;
 			
-			main.showAlphabetEditorDialog(main.frame, main.units, false);
+			main.alphDiag.setVisible(true);
 		});
 	}
 	
 	public void showInputDialog(Main main) {
 		if(inputDiag == null) {
 			inputDiag = new JDialog(this);
-			inputDiag.setTitle("Enter Text");
+			inputDiag.setTitle("Enter Cipher Text");
 			inputDiag.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 			inputDiag.setSize(400, 400);
 			inputDiag.setMinimumSize(new Dimension(400, 400));
@@ -150,6 +147,7 @@ public class Frame extends JFrame
 			
 			JButton submit = new JButton("Submit");
 			c.gridx = 1;
+			c.insets = new Insets(0, 0, 5, 5);
 			inputDiag.add(submit, c);
 			
 			cancel.addActionListener((actionEvent) -> {
@@ -162,18 +160,48 @@ public class Frame extends JFrame
 				main.frame.pack();
 				main.frame.setLocationRelativeTo(null);
 				main.frame.revalidate();
-				main.showAlphabetEditorDialog(main.frame, main.units, true);
+				main.frame.setVisible(true);
+				
+				if(main.alphDiag == null) {
+					main.alphDiag = new AlphabetDialog(main.frame);
+					main.alphDiag.setup(main, main.units);
+				} else {
+					main.alphDiag.reset(main, main.units, true);
+				}
 			});
-		} else {
-//			for(Component comp : inputDiag.getComponents()) {
-//				if(comp instanceof JTextArea) {
-//					JTextArea area = (JTextArea)comp;
-//					area.setText("");
-//				}
-//			}
 		}
 
 		inputDiag.setLocationRelativeTo(this);
 		inputDiag.setVisible(true);
+	}
+	
+	public void showOutputDialog(Main main, String str) {
+		if(outputDiag == null) {
+			outputDiag = new JDialog(this);
+			outputDiag.setTitle("Output");
+			outputDiag.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+			outputDiag.setSize(400, 400);
+			outputDiag.setMinimumSize(new Dimension(400, 400));
+			
+			outputDiag.setLayout(new GridBagLayout());
+			
+			GridBagConstraints c = new GridBagConstraints();
+			
+			outputTextArea = new JTextArea(str);
+			c.gridx = 0;
+			c.gridy = 0;
+			c.fill = GridBagConstraints.BOTH;
+			c.weightx = 1;
+			c.weighty = 1;
+			c.insets = new Insets(5, 5, 5, 5);
+			outputDiag.add(outputTextArea, c);
+			
+			outputDiag.setLocationRelativeTo(this);
+		} else {
+			outputTextArea.setText(str);
+			outputTextArea.repaint();
+		}
+		
+		outputDiag.setVisible(true);
 	}
 }

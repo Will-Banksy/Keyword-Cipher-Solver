@@ -45,7 +45,7 @@ public class CryptoUnit extends JPanel
 		c.insets = new Insets(5, 5, 5, 5);
 		add(container, c);
 		
-		if(!Main.isLetter(ch))
+		if(!Character.isLetter(ch))
 		{
 			input.setEditable(false);
 		}
