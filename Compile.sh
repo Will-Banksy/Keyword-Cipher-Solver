@@ -1,4 +1,3 @@
-# Use sed to substitute 's/' a newline with a space
 sources="src/main/AlphabetDialog.java src/main/CryptoUnit.java src/main/Frame.java src/main/JTextFieldLimit.java src/main/Main.java"
 outputDir=build
 
