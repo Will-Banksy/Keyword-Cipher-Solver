@@ -244,6 +244,7 @@ public class AlphabetDialog extends JDialog {
 		
 		JButton autoFill = new JButton("Autofill");
 		c.gridx = 1;
+		c.insets = new Insets(0, 0, 5, 5);
 		add(autoFill, c);
 		
 		getKeywords.addActionListener((actionEvent) -> {
