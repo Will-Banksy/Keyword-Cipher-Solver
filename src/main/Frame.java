@@ -93,6 +93,9 @@ public class Frame extends JFrame {
 			
 			StringBuilder sb = new StringBuilder();
 			for(CryptoUnit u : main.units) {
+				if(u.input.getText().toUpperCase().charAt(0) < 32) {
+					continue;
+				}
 				if(Character.isUpperCase(u.ch)) {
 					sb.append(u.input.getText().toUpperCase());
 				} else {
@@ -102,6 +105,7 @@ public class Frame extends JFrame {
 					sb.append(u.ch);
 				}
 			}
+			System.out.println("Output length: " + sb.toString().length());
 			showOutputDialog(main, sb.toString());
 		});
 		
@@ -203,5 +207,11 @@ public class Frame extends JFrame {
 		}
 		
 		outputDiag.setVisible(true);
+	}
+	
+	public void repaintUnits(Main main) {
+		for(CryptoUnit unit : main.units) {
+			unit.repaint();
+		}
 	}
 }

@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
@@ -14,10 +15,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -26,11 +27,19 @@ public class Main
 	public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 	
 	Frame frame = null;
-	JDialog alphabetEditorDialog = null;
 	AlphabetDialog alphDiag = null;
 	ArrayList<CryptoUnit> units = null;
 	NthCommon nthCommon = NthCommon.MOST_COMMON;
-	static String[] dictionary;
+	// The volatile keyword guarantees visibility of changes to variables across threads: http://tutorials.jenkov.com/java-concurrency/volatile.html
+	static volatile String[] dictionary;
+	static volatile LinkedHashMap<String, String> cipherAlphabets = null;
+	
+	/**
+	 * The key is the letter that was inputted, the value if the letter that has been used to replace it<br>
+	 * The value the the textbox is the value in the map<br>
+	 * The input value that appears in the label is the key in the map
+	 */
+	public LinkedHashMap<Character, Character> charMap;
 	
 	public enum NthCommon
 	{
@@ -46,14 +55,29 @@ public class Main
 	
 	public void init()
 	{
-		try
-		{
-			if(dictionary == null)
-				dictionary = getResourceFileAsString("Dictionary.txt").split("\n");
+		if(cipherAlphabets == null || dictionary == null) {
+			Thread thread = new Thread(() -> {
+				if(dictionary == null) {
+					try {
+						dictionary = getResourceFileAsString("Dictionary.txt").split("\n");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if(cipherAlphabets == null) {
+					cipherAlphabets = new LinkedHashMap<String, String>();
+					for(String str : dictionary)
+					{
+						cipherAlphabets.put(str, GetCipherAlphabet(str, false));
+					}
+				}
+			});
+			thread.start();
 		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
+		
+		charMap = new LinkedHashMap<Character, Character>();
+		for(int i = 0; i < ALPHABET.length(); i++) {
+			charMap.put(ALPHABET.charAt(i), (char)0);
 		}
 		
 		frame = new Frame();
@@ -86,7 +110,7 @@ public class Main
 			{
 				c.gridx = j;
 				c.gridy = i;
-				CryptoUnit unit = new CryptoUnit(lines[i].charAt(j));
+				CryptoUnit unit = new CryptoUnit(lines[i].charAt(j), this);
 				unit.input.addFocusListener(new FocusListener() {
 					@Override public void focusGained(FocusEvent arg0)
 					{
@@ -142,35 +166,24 @@ public class Main
 				});
 				
 				unit.input.setDocument(new JTextFieldLimit(1));
-				unit.input.addKeyListener(new KeyListener()
+				unit.input.addKeyListener(new KeyAdapter()
 				{
-					@Override public void keyPressed(KeyEvent e)
-					{
-					}
-
-					@Override public void keyReleased(KeyEvent e)
-					{
-					}
-
 					@Override public void keyTyped(KeyEvent e)
 					{
+						char ch = e.getKeyChar();
+						charMap.put(unit.ch, ch);
 						for(CryptoUnit u : list)
 						{
 							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
 							{
-								u.input.setText(e.getKeyChar() + "");
-								u.input.repaint();
+								u.repaint();
 							}
 						}
-						if(alphDiag.alphabetUnits != null)
+						for(CryptoUnit u : alphDiag.alphabetUnits)
 						{
-							for(CryptoUnit u : alphDiag.alphabetUnits)
+							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
 							{
-								if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-								{
-									u.input.setText(e.getKeyChar() + "");
-									u.input.repaint();
-								}
+								u.repaint();
 							}
 						}
 					}
@@ -355,29 +368,24 @@ public class Main
 	
 	protected static ArrayList<String> GetKeywords(String cipherAlph)
 	{
-		if(dictionary == null)
-		{
-			try
-			{
-				dictionary = getResourceFileAsString("Dictionary.txt").split("\n");
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
 		ArrayList<String> possibleKeywords = new ArrayList<String>();
 		String cipherAlphabet = cipherAlph;
 		
-		for(String str : dictionary)
-		{
-			String alph = GetCipherAlphabet(str, false);
-			if(cipherAlphabet.equals(alph))
-			{
+//		for(String str : dictionary)
+//		{
+//			String alph = GetCipherAlphabet(str, false);
+//			if(cipherAlphabet.equals(alph))
+//			{
+//				possibleKeywords.add(str);
+//			}
+//			System.out.println(alph);
+//		}
+		for(String str : dictionary) {
+			String alph = cipherAlphabets.get(str);
+			if(cipherAlphabet.equals(alph)) {
 				possibleKeywords.add(str);
+				System.out.println(alph);
 			}
-			System.out.println(alph);
 		}
 		return possibleKeywords;
 	}

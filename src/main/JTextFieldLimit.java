@@ -4,30 +4,40 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
-@SuppressWarnings("serial")
 class JTextFieldLimit extends PlainDocument
 {
-	  private int limit;
-	  
-	  JTextFieldLimit(int limit)
-	  {
-	    super();
-	    this.limit = limit;
-	  }
+	private static final long serialVersionUID = 464100995339269114L;
 
-	  JTextFieldLimit(int limit, boolean upper)
-	  {
-	    super();
-	    this.limit = limit;
-	  }
+	private int limit;
+	private Main main = null;
+	private char ch;
 
-	  public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException
-	  {
-	    if (str == null)
-	      return;
-
-	    if ((getLength() + str.length()) <= limit) {
-	      super.insertString(offset, str, attr);
-	    }
-	  }
+	JTextFieldLimit(int limit)
+	{
+		super();
+		this.limit = limit;
 	}
+	
+	JTextFieldLimit(int limit, Main main, char ch) {
+		super();
+		this.limit = limit;
+	}
+
+	@Override public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException
+	{
+		if (str == null)
+			return;
+
+		if ((getLength() + str.length()) <= limit) {
+			super.insertString(offset, str, attr);
+		}
+	}
+
+	@Override protected void removeUpdate(DefaultDocumentEvent chng) {
+//		System.out.println("Remove update");
+//		if(main != null) {
+//			main.charMap.put(ch, null);
+//		}
+		super.removeUpdate(chng);
+	}
+}

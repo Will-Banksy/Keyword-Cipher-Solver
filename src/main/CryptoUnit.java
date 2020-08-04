@@ -21,10 +21,12 @@ public class CryptoUnit extends JPanel
 	public boolean showSelected;
 	public char ch;
 	public JTextField input;
+	Main main;
 	
-	public CryptoUnit(char enciphered)
+	public CryptoUnit(char enciphered, Main main)
 	{
 		ch = enciphered;
+		this.main = main;
 		
 		setLayout(new GridBagLayout());
 		
@@ -53,6 +55,18 @@ public class CryptoUnit extends JPanel
 	
 	@Override public void paintComponent(Graphics g)
 	{
+		Character displayValue = main.charMap.get(ch);
+		boolean setText = false;
+		if(input.getText().isEmpty()) {
+			setText = true;
+		} else if(displayValue != input.getText().charAt(0)) {
+			setText = true;
+		}
+		if(setText && displayValue != null) {
+			input.setText(String.valueOf(displayValue.charValue()));
+			input.repaint();
+		}
+		
 		Graphics2D g2d = (Graphics2D)g;
 		if(showSelected)
 		{

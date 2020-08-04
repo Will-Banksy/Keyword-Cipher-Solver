@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -21,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import main.Main.NthCommon;
 
@@ -30,8 +33,38 @@ public class AlphabetDialog extends JDialog {
 	ArrayList<CryptoUnit> alphabetUnits = null;
 	Main.NthCommon nthCommon;
 	JLabel nthCommonCounts;
-	JPanel content;
+	JPanel unitContainer;
 	ArrayList<JLabel> letterCounts = null;
+	JDialog outputDiag = null;
+	JTextArea outputTextArea = null;
+	
+	private static class CharInString {
+		int index;
+		char ch;
+		
+		public CharInString(int i, char c) {
+			index = i;
+			ch = c;
+		}
+		
+		@Override public boolean equals(Object o) {
+			if(o instanceof CharInString) {
+				CharInString cis = (CharInString)o;
+				if(index == cis.index && ch == cis.ch) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public static ArrayList<CharInString> fromString(String str) {
+			ArrayList<CharInString> list = new ArrayList<CharInString>();
+			for(int i = 0; i < str.length(); i++) {
+				list.add(new CharInString(i, str.charAt(i)));
+			}
+			return list;
+		}
+	}
 	
 	public AlphabetDialog(Frame owner) {
 		super(owner);
@@ -48,8 +81,8 @@ public class AlphabetDialog extends JDialog {
 		
 		letterCounts = new ArrayList<JLabel>();
 		
-		content = new JPanel();
-		content.setLayout(new GridBagLayout());
+		unitContainer = new JPanel();
+		unitContainer.setLayout(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -59,7 +92,7 @@ public class AlphabetDialog extends JDialog {
 		for(int j = 0; j < Main.ALPHABET.length(); j++) {
 			c.gridx = j;
 			c.gridy = 0;
-			CryptoUnit unit = new CryptoUnit(Main.ALPHABET.charAt(j));
+			CryptoUnit unit = new CryptoUnit(Main.ALPHABET.charAt(j), main);
 			unit.input.addFocusListener(new FocusListener() {
 				@Override public void focusGained(FocusEvent arg0) {
 					unit.showSelected = true;
@@ -105,29 +138,26 @@ public class AlphabetDialog extends JDialog {
 			{
 				@Override public void keyTyped(KeyEvent e)
 				{
+					char ch = e.getKeyChar();
+					main.charMap.put(unit.ch, ch);
 					for(CryptoUnit u : list)
 					{
 						if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
 						{
-							u.input.setText(e.getKeyChar() + "");
-							u.input.repaint();
+							u.repaint();
 						}
 					}
-					if(alphabetUnits != null)
+					for(CryptoUnit u : alphabetUnits)
 					{
-						for(CryptoUnit u : alphabetUnits)
+						if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
 						{
-							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-							{
-								u.input.setText(e.getKeyChar() + "");
-								u.input.repaint();
-							}
+							u.repaint();
 						}
 					}
 				}
 			});
 
-			content.add(unit, c);
+			unitContainer.add(unit, c);
 			alphabetUnits.add(unit);
 			
 			int counter = 0;
@@ -141,20 +171,20 @@ public class AlphabetDialog extends JDialog {
 			
 			JLabel letterCount = new JLabel(String.valueOf(counter));
 			c.gridy = 1;
-			content.add(letterCount, c);
+			unitContainer.add(letterCount, c);
 			
 			letterCount.setToolTipText("Letter Count");
 			letterCounts.add(letterCount);
 		}
 		
-		JScrollPane pane = new JScrollPane(content);
+		JScrollPane pane = new JScrollPane(unitContainer);
 
 		c.gridx = 0;
 		c.gridy = 0;
+		c.gridwidth = 2;
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1;
 		c.weighty = 1;
-		c.gridwidth = 1;
 		add(pane, c);
 		
 		nthCommon = NthCommon.MOST_COMMON;
@@ -207,32 +237,46 @@ public class AlphabetDialog extends JDialog {
 		add(nthCommonCounts, c);
 		
 		c.gridy = 2;
+		c.gridwidth = 1;
+		
 		JButton getKeywords = new JButton("Get possible keywords");
 		add(getKeywords, c);
 		
-		getKeywords.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0)
+		JButton autoFill = new JButton("Autofill");
+		c.gridx = 1;
+		add(autoFill, c);
+		
+		getKeywords.addActionListener((actionEvent) -> {
+			ArrayList<String> possibleKeywords = new ArrayList<String>();
+			String cipherAlphabet;
+			StringBuilder sb = new StringBuilder();
+			for(CryptoUnit unit : alphabetUnits)
 			{
-				ArrayList<String> possibleKeywords = new ArrayList<String>();
-				String cipherAlphabet;
-				StringBuilder sb = new StringBuilder();
-				for(CryptoUnit unit : alphabetUnits)
-				{
-					sb.append(unit.input.getText());
-				}
-				cipherAlphabet = sb.toString().toLowerCase();
-				System.out.println(cipherAlphabet);
-				
-				for(String str : Main.dictionary)
-				{
-					String alph = Main.GetCipherAlphabet(str, false);
-					if(cipherAlphabet.equals(alph))
-					{
-						possibleKeywords.add(str);
-					}
-				}
-				JOptionPane.showMessageDialog(main.frame, possibleKeywords);
+				sb.append(unit.input.getText());
 			}
+			cipherAlphabet = sb.toString().toLowerCase();
+			System.out.println(cipherAlphabet);
+			
+			for(String str : Main.dictionary)
+			{
+				String alph = Main.GetCipherAlphabet(str, false);
+				if(cipherAlphabet.equals(alph))
+				{
+					possibleKeywords.add(str);
+				}
+			}
+			
+			sb = new StringBuilder();
+			for(String str : possibleKeywords) {
+				sb.append(str + "\n");
+			}
+			
+			//JOptionPane.showMessageDialog(main.frame, possibleKeywords);
+			showOutputDialog(main, sb.toString());
+		});
+		
+		autoFill.addActionListener((actionEvent) -> {
+			autoFill(main);
 		});
 		
 		pack();
@@ -267,5 +311,86 @@ public class AlphabetDialog extends JDialog {
 		pack();
 		setLocationRelativeTo(main.frame);
 		setVisible(true);
+	}
+	
+	public void showOutputDialog(Main main, String str) {
+		if(outputDiag == null) {
+			outputDiag = new JDialog(this);
+			outputDiag.setTitle("Output");
+			outputDiag.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+			outputDiag.setSize(400, 400);
+			outputDiag.setMinimumSize(new Dimension(400, 400));
+			
+			outputDiag.setLayout(new GridBagLayout());
+			
+			GridBagConstraints c = new GridBagConstraints();
+			
+			outputTextArea = new JTextArea(str);
+			c.gridx = 0;
+			c.gridy = 0;
+			c.fill = GridBagConstraints.BOTH;
+			c.weightx = 1;
+			c.weighty = 1;
+			c.insets = new Insets(5, 5, 5, 5);
+			outputDiag.add(outputTextArea, c);
+			
+			outputDiag.setLocationRelativeTo(this);
+		} else {
+			outputTextArea.setText(str);
+			outputTextArea.repaint();
+		}
+		
+		outputDiag.setVisible(true);
+	}
+	
+	public void autoFill(Main main) {
+//		StringBuilder sb = new StringBuilder();
+//		for(CryptoUnit unit : alphabetUnits) {
+//			sb.append(unit.input.getText());
+//		}
+//		String cipAlph = Main.GetCipherAlphabet(sb.toString(), false);
+		
+		ArrayList<CharInString> alphabet = new ArrayList<CharInString>();
+		for(int i = 0; i < alphabetUnits.size(); i++) {
+			if(!alphabetUnits.get(i).input.getText().isBlank() && (int)alphabetUnits.get(i).input.getText().charAt(0) >= 32) {
+				alphabet.add(new CharInString(i, alphabetUnits.get(i).input.getText().charAt(0))); // Get first char in textbox
+			}
+		}
+		
+//		System.out.println("AlphLen: " + alphabet.size() + ", alph[0]: " + (int)alphabet.get(0).ch);
+		
+		for(Map.Entry<String, String> entry : Main.cipherAlphabets.entrySet()) {
+			ArrayList<CharInString> cipAlph = CharInString.fromString(entry.getValue()); // Get cipher alphabet for entry as arraylist of CharInStrings
+			if(compareAgainst(alphabet, cipAlph)) { // If each textfield content in alphabetUnits is equal to what it would be in the new cipher alphabet
+				for(int i = 0; i < Main.ALPHABET.length(); i++) {
+					main.charMap.put(Main.ALPHABET.charAt(i), cipAlph.get(i).ch);
+				}
+				// Repaint all units
+				main.frame.repaintUnits(main);
+				repaintUnits(main);
+				System.out.println("Found one");
+				break; // Break out of looping over the cipherAlphabets - we've found a suitable candidate
+			}
+		}
+		
+//		System.out.println("Autofill: " + cipAlph);
+	}
+	
+	/**
+	 * Returns true if all the characters in chars match one in compAgainst
+	 */
+	public boolean compareAgainst(ArrayList<CharInString> chars, ArrayList<CharInString> compAgainst) {
+		for(int i = 0; i < chars.size(); i++) {
+			if(!compAgainst.contains(chars.get(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void repaintUnits(Main main) {
+		for(CryptoUnit unit : alphabetUnits) {
+			unit.repaint();
+		}
 	}
 }
