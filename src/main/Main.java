@@ -384,7 +384,6 @@ public class Main
 			String alph = cipherAlphabets.get(str);
 			if(cipherAlphabet.equals(alph)) {
 				possibleKeywords.add(str);
-				System.out.println(alph);
 			}
 		}
 		return possibleKeywords;

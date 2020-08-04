@@ -105,7 +105,6 @@ public class Frame extends JFrame {
 					sb.append(u.ch);
 				}
 			}
-			System.out.println("Output length: " + sb.toString().length());
 			showOutputDialog(main, sb.toString());
 		});
 		

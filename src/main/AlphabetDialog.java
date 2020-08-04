@@ -255,7 +255,6 @@ public class AlphabetDialog extends JDialog {
 				sb.append(unit.input.getText());
 			}
 			cipherAlphabet = sb.toString().toLowerCase();
-			System.out.println(cipherAlphabet);
 			
 			for(String str : Main.dictionary)
 			{
@@ -368,7 +367,6 @@ public class AlphabetDialog extends JDialog {
 				// Repaint all units
 				main.frame.repaintUnits(main);
 				repaintUnits(main);
-				System.out.println("Found one");
 				break; // Break out of looping over the cipherAlphabets - we've found a suitable candidate
 			}
 		}
