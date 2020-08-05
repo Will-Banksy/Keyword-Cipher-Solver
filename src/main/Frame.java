@@ -44,6 +44,8 @@ public class Frame extends JFrame {
 		setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(400, 400));
 		
+//		setFont(new Font("DejaVu Sans", Font.PLAIN, 10));
+		
 		setLayout(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();

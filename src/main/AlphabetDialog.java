@@ -5,8 +5,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -15,8 +13,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -96,80 +92,10 @@ public class AlphabetDialog extends JDialog {
 			unit.input.addFocusListener(new FocusListener() {
 				@Override public void focusGained(FocusEvent arg0) {
 					main.doFocusThings(unit, true, false, (char)0);
-//					unit.showSelected = true;
-//					unit.repaint();
-//					for(CryptoUnit u : list) {
-//						// If the two units cipher (immutable) character is the same
-//						if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-//						{
-//							u.showSelected = true;
-//							u.repaint();
-//						}
-//						else
-//						{
-//							u.showSelected = false;
-//							u.repaint();
-//						}
-//						// if the two units input character is the same
-//						if(u.input.getText().equalsIgnoreCase(unit.input.getText()) && !Main.stringUnimportant(u.input.getText()))
-//						{
-//							// And their cipher character is different
-//							if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
-//							{
-//								u.showSelectedBad = true;
-//								u.repaint();
-//							}
-//							else
-//							{
-//								u.showSelectedBad = false;
-//								u.repaint();
-//							}
-//						}
-//					}
-//					if(alphabetUnits != null) {
-//						for(CryptoUnit u : alphabetUnits) {
-//							// If the two units cipher (immutable) character is the same
-//							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-//							{
-//								u.showSelected = true;
-//								u.repaint();
-//							}
-//							else
-//							{
-//								u.showSelected = false;
-//								u.repaint();
-//							}
-//							// if the two units input character is the same
-//							if(u.input.getText().equalsIgnoreCase(unit.input.getText()) && !Main.stringUnimportant(u.input.getText()))
-//							{
-//								// And their cipher character is different
-//								if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
-//								{
-//									u.showSelectedBad = true;
-//									u.repaint();
-//								}
-//								else
-//								{
-//									u.showSelectedBad = false;
-//									u.repaint();
-//								}
-//							}
-//						}
-//					}
 				}
 
 				@Override public void focusLost(FocusEvent arg0) {
 					main.doFocusThings(unit, false, false, (char)0);
-//					for(CryptoUnit u : list) {
-//						u.showSelected = false;
-//						u.repaint();
-//					}
-//					if(alphabetUnits != null) {
-//						for(CryptoUnit u : alphabetUnits) {
-//							u.showSelected = false;
-//							u.repaint();
-//						}
-//					}
 				}
 			});
 
@@ -184,16 +110,22 @@ public class AlphabetDialog extends JDialog {
 					main.charMap.put(unit.ch, ch);
 					for(CryptoUnit u : list)
 					{
-						if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
+						if(u != unit)
 						{
-							u.repaint();
+							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
+							{
+								u.repaint();
+							}
 						}
 					}
 					for(CryptoUnit u : alphabetUnits)
 					{
-						if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
+						if(u != unit)
 						{
-							u.repaint();
+							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
+							{
+								u.repaint();
+							}
 						}
 					}
 				}
@@ -223,7 +155,7 @@ public class AlphabetDialog extends JDialog {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1;
 		c.weighty = 1;
@@ -236,6 +168,7 @@ public class AlphabetDialog extends JDialog {
 		String mcTrigrams = main.getMostCommonStrings(list, 3, nthCommon);
 		
 		nthCommonCounts = new JLabel("Most Common Letters: " + mcLetters.toUpperCase() + "  Most Common Bigrams: " + mcBigrams.toUpperCase() + "  Most Common Trigrams: " + mcTrigrams.toUpperCase());
+		nthCommonCounts.setToolTipText("Click to cycle between most common, second most common and third most common");
 		
 		nthCommonCounts.addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(MouseEvent arg0)
@@ -282,46 +215,30 @@ public class AlphabetDialog extends JDialog {
 		c.gridwidth = 1;
 		
 		JButton getKeywords = new JButton("Get possible keywords");
+		getKeywords.setToolTipText("Matches the input you've supplied against a dictionary, and displays a list of those words in the dictionary that would produce the same pattern");
 		add(getKeywords, c);
 		
 		JButton autoFill = new JButton("Autofill");
+		autoFill.setToolTipText("Matches the input you've supplied against a dictionary, and fills in the first match it comes across");
 		c.gridx = 1;
 		c.insets = new Insets(0, 0, 5, 5);
 		add(autoFill, c);
 		
+		JButton fillWord = new JButton("Fill Word");
+		fillWord.setToolTipText("Allows you to enter a keyword, which is then autofilled");
+		c.gridx = 2;
+		add(fillWord, c);
+		
 		getKeywords.addActionListener((actionEvent) -> {
 			findKeywords(main);
-//			ArrayList<String> possibleKeywords = new ArrayList<String>();
-//			String cipherAlphabet;
-//			StringBuilder sb = new StringBuilder();
-//			for(CryptoUnit unit : alphabetUnits)
-//			{
-//				if((int)unit.input.getText().charAt(0) >= 32)
-//					sb.append(unit.input.getText());
-//			}
-//			cipherAlphabet = sb.toString().toLowerCase();
-//			
-//			for(String str : Main.dictionary)
-//			{
-//				String alph = Main.GetCipherAlphabet(str, false);
-//				if(cipherAlphabet.equals(alph))
-//				{
-//					possibleKeywords.add(str);
-//				}
-//			}
-//			
-//			sb = new StringBuilder();
-//			for(String str : possibleKeywords) {
-//				sb.append(str + "\n");
-//			}
-//			
-//			//JOptionPane.showMessageDialog(main.frame, possibleKeywords);
-//			showOutputDialog(main, sb.toString());
-//			System.out.println("SB: " + sb.toString());
 		});
 		
 		autoFill.addActionListener((actionEvent) -> {
 			autoFill(main);
+		});
+		
+		fillWord.addActionListener((actionEvent) -> {
+			fillWord(main);
 		});
 		
 		pack();
@@ -454,5 +371,25 @@ public class AlphabetDialog extends JDialog {
 		for(CryptoUnit unit : alphabetUnits) {
 			unit.repaint();
 		}
+	}
+	
+	public void fillWord(Main main) {
+		String str = JOptionPane.showInputDialog(this, "Enter Keyword");
+		
+		if(str == null) {
+			return;
+		} else if(str.isBlank()) {
+			return;
+		}
+		
+		String cipherAlph = Main.GetCipherAlphabet(str, false);
+		
+		for(int i = 0; i < cipherAlph.length(); i++) {
+			main.charMap.put(Main.ALPHABET.charAt(i), cipherAlph.charAt(i));
+		}
+		
+		// Repaint all units
+		main.frame.repaintUnits(main);
+		repaintUnits(main);
 	}
 }

@@ -8,7 +8,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +54,8 @@ public class Main
 	
 	public void init()
 	{
+//		setUIFont (new javax.swing.plaf.FontUIResource("Helvetica", Font.BOLD, 12));
+		
 		if(cipherAlphabets == null || dictionary == null) {
 			Thread thread = new Thread(() -> {
 				if(dictionary == null) {
@@ -210,16 +211,22 @@ public class Main
 						charMap.put(unit.ch, ch);
 						for(CryptoUnit u : list)
 						{
-							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
+							if(u != unit)
 							{
-								u.repaint();
+								if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
+								{
+									u.repaint();
+								}
 							}
 						}
 						for(CryptoUnit u : alphDiag.alphabetUnits)
 						{
-							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
+							if(u != unit)
 							{
-								u.repaint();
+								if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
+								{
+									u.repaint();
+								}
 							}
 						}
 					}
@@ -446,7 +453,26 @@ public class Main
 		String unitInputText = useNewInput ? String.valueOf(unitNewInput) : unit.input.getText();
 		if(focusGained) {
 			unit.showSelected = true;
-			unit.repaint();
+//			unit.repaint();
+			
+			for(CryptoUnit u : units)
+			{
+				if(u.showSelectedBad) {
+					u.showSelectedBad = false;
+					u.repaint();
+				}
+			}
+			if(alphDiag.alphabetUnits != null)
+			{
+				for(CryptoUnit u : alphDiag.alphabetUnits)
+				{
+					if(u.showSelectedBad) {
+						u.showSelectedBad = false;
+						u.repaint();
+					}
+				}
+			}
+			
 			for(CryptoUnit u : units)
 			{
 				// If the two units cipher (immutable) character is the same

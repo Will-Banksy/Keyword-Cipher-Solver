@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sources="src/main/AlphabetDialog.java src/main/CryptoUnit.java src/main/Frame.java src/main/JTextFieldLimit.java src/main/Main.java"
 outputDir=build
 
@@ -12,4 +14,6 @@ cp resources/Dictionary.txt build/Dictionary.txt
 
 javac -d $outputDir src/main/*.java
 
-echo "Compiled Successfully"
+if [ "$?" == "0" ]; then
+	echo "Compiled Successfully"
+fi
