@@ -65,7 +65,7 @@ public class CryptoUnit extends JPanel
 				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 				
 				g2d.setColor(new Color(51, 51, 51));
-				drawCenteredString(g2d, txt, new Rectangle(0, 0, getWidth() - 1, getHeight() - 1), getFont());
+				drawCentredString(g2d, txt, new Rectangle(0, 0, getWidth() - 1, getHeight() - 1), getFont());
 			}
 		};
 		
@@ -86,12 +86,6 @@ public class CryptoUnit extends JPanel
 		{
 			input.setEditable(false);
 		}
-	}
-	
-	@Override public void repaint() {
-		super.repaint();
-		if(input != null)
-			input.repaint();
 	}
 	
 	@Override public void paintComponent(Graphics g)
@@ -130,7 +124,7 @@ public class CryptoUnit extends JPanel
 		}
 	}
 	
-	public static void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
+	public static void drawCentredString(Graphics g, String text, Rectangle rect, Font font) {
 	    // Get the FontMetrics
 	    FontMetrics metrics = g.getFontMetrics(font);
 	    // Determine the X coordinate for the text

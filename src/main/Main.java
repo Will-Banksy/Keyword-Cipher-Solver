@@ -54,8 +54,6 @@ public class Main
 	
 	public void init()
 	{
-//		setUIFont (new javax.swing.plaf.FontUIResource("Helvetica", Font.BOLD, 12));
-		
 		if(cipherAlphabets == null || dictionary == null) {
 			Thread thread = new Thread(() -> {
 				if(dictionary == null) {
@@ -116,87 +114,11 @@ public class Main
 					@Override public void focusGained(FocusEvent arg0)
 					{
 						doFocusThings(unit, true, false, (char)0);
-//						unit.showSelected = true;
-//						unit.repaint();
-//						for(CryptoUnit u : list)
-//						{
-//							// If the two units cipher (immutable) character is the same
-//							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-//							{
-//								u.showSelected = true;
-//								u.repaint();
-//							}
-//							else
-//							{
-//								u.showSelected = false;
-//								u.repaint();
-//							}
-//							// if the two units input character is the same
-//							if(u.input.getText().equalsIgnoreCase(unit.input.getText()) && !Main.stringUnimportant(u.input.getText()))
-//							{
-//								// And their cipher character is different
-//								if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
-//								{
-//									u.showSelectedBad = true;
-//									u.repaint();
-//								}
-//								else
-//								{
-//									u.showSelectedBad = false;
-//									u.repaint();
-//								}
-//							}
-//						}
-//						if(alphDiag.alphabetUnits != null)
-//						{
-//							for(CryptoUnit u : alphDiag.alphabetUnits)
-//							{
-//								// If the two units cipher (immutable) character is the same
-//								if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-//								{
-//									u.showSelected = true;
-//									u.repaint();
-//								}
-//								else
-//								{
-//									u.showSelected = false;
-//									u.repaint();
-//								}
-//								// if the two units input character is the same
-//								if(u.input.getText().equalsIgnoreCase(unit.input.getText()) && !Main.stringUnimportant(u.input.getText()))
-//								{
-//									// And their cipher character is different
-//									if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
-//									{
-//										u.showSelectedBad = true;
-//										u.repaint();
-//									}
-//									else
-//									{
-//										u.showSelectedBad = false;
-//										u.repaint();
-//									}
-//								}
-//							}
-//						}
 					}
 					
 					@Override public void focusLost(FocusEvent arg0)
 					{
 						doFocusThings(unit, false, false, (char)0);
-//						for(CryptoUnit u : list)
-//						{
-//							u.showSelected = false;
-//							u.repaint();
-//						}
-//						if(alphDiag.alphabetUnits != null)
-//						{
-//							for(CryptoUnit u : alphDiag.alphabetUnits)
-//							{
-//								u.showSelected = false;
-//								u.repaint();
-//							}
-//						}
 					}
 				});
 				
@@ -250,7 +172,7 @@ public class Main
 		HashMap<String, Integer> strings = new HashMap<String, Integer>();
 		for(int i = 0; i < list.size() - (length - 1); i++)
 		{
-			String ss = getStringFromUnits(list, i, length);//list.get(i) + "" + list.get(i + 1);
+			String ss = getStringFromUnits(list, i, length);
 			
 			boolean hasInvalidChar = false;
 			for(int j = 0; j < ss.length(); j++)
@@ -401,7 +323,6 @@ public class Main
 				{
 					sb.deleteCharAt(j);
 					sb.insert(insertAt, keyword.charAt(i));
-					//sb.setCharAt(insertAt, keyword.charAt(i));
 					insertAt++;
 				}
 			}
@@ -414,15 +335,6 @@ public class Main
 		ArrayList<String> possibleKeywords = new ArrayList<String>();
 		String cipherAlphabet = cipherAlph;
 		
-//		for(String str : dictionary)
-//		{
-//			String alph = GetCipherAlphabet(str, false);
-//			if(cipherAlphabet.equals(alph))
-//			{
-//				possibleKeywords.add(str);
-//			}
-//			System.out.println(alph);
-//		}
 		for(String str : dictionary) {
 			String alph = cipherAlphabets.get(str);
 			if(cipherAlphabet.equals(alph)) {
@@ -476,7 +388,7 @@ public class Main
 			for(CryptoUnit u : units)
 			{
 				// If the two units cipher (immutable) character is the same
-				if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+				if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
 				{
 					u.showSelected = true;
 					u.repaint();
@@ -507,7 +419,7 @@ public class Main
 				for(CryptoUnit u : alphDiag.alphabetUnits)
 				{
 					// If the two units cipher (immutable) character is the same
-					if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+					if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
 					{
 						u.showSelected = true;
 						u.repaint();

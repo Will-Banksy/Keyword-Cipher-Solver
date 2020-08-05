@@ -39,12 +39,10 @@ public class Frame extends JFrame {
 	}
 	
 	public void setup(Main main) {
-		setTitle("Cryptogram");
+		setTitle("Keyword Cipher Solver - Cryptogram");
 		setSize(400, 400);
 		setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(400, 400));
-		
-//		setFont(new Font("DejaVu Sans", Font.PLAIN, 10));
 		
 		setLayout(new GridBagLayout());
 		

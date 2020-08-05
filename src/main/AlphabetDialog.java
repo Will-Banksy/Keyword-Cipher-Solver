@@ -308,20 +308,12 @@ public class AlphabetDialog extends JDialog {
 	}
 	
 	public void autoFill(Main main) {
-//		StringBuilder sb = new StringBuilder();
-//		for(CryptoUnit unit : alphabetUnits) {
-//			sb.append(unit.input.getText());
-//		}
-//		String cipAlph = Main.GetCipherAlphabet(sb.toString(), false);
-		
 		ArrayList<CharInString> alphabet = new ArrayList<CharInString>();
 		for(int i = 0; i < alphabetUnits.size(); i++) {
 			if(!alphabetUnits.get(i).input.getText().isBlank() && (int)alphabetUnits.get(i).input.getText().charAt(0) >= 32) {
 				alphabet.add(new CharInString(i, alphabetUnits.get(i).input.getText().charAt(0))); // Get first char in textbox
 			}
 		}
-		
-//		System.out.println("AlphLen: " + alphabet.size() + ", alph[0]: " + (int)alphabet.get(0).ch);
 		
 		for(Map.Entry<String, String> entry : Main.cipherAlphabets.entrySet()) {
 			ArrayList<CharInString> cipAlph = CharInString.fromString(entry.getValue()); // Get cipher alphabet for entry as arraylist of CharInStrings
