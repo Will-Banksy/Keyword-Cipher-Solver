@@ -6,7 +6,7 @@ I've embraced Metal (parts of it will look wierd if you change it)
 
 ### Compile And Run
 
--- Only tested on Linux, should also work on Mac, sorry Windows --
+-- Only tested on Linux, should also work on Mac, sorry Windows (but if you just follow along with the Windows equivalents of the commands in the shell scripts, that should work) --
 
 Run Compile.sh to compile the program
 
