@@ -303,8 +303,8 @@ public class AlphabetDialog extends JDialog {
 			outputTextArea.setText(str);
 		}
 
-		outputDiag.repaint();
 		outputDiag.setVisible(true);
+		outputDiag.repaint();
 	}
 	
 	public void autoFill(Main main) {

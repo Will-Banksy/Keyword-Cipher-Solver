@@ -45,16 +45,21 @@ public class CryptoUnit extends JPanel
 			}
 			
 			@Override public void paintComponent(Graphics g) {
-//				super.paintComponent(g);
+				super.paintComponent(g);
 				String txt = input.getText();
 				boolean focused = input.isFocusOwner();
+				boolean enabled = input.isEnabled();
 				
 				Graphics2D g2d = (Graphics2D)g;
 				
 				g2d.setBackground(Color.WHITE);
 				g2d.clearRect(0, 0, getWidth(), getHeight());
 				
-				g2d.setColor(new Color(120, 136, 151));
+				if(enabled) {
+					g2d.setColor(new Color(120, 136, 151));
+				} else {
+					g2d.setColor(new Color(184, 207, 229));
+				}
 				g2d.setStroke(new BasicStroke(1));
 				g2d.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 				
@@ -84,7 +89,7 @@ public class CryptoUnit extends JPanel
 		
 		if(!Character.isLetter(ch))
 		{
-			input.setEditable(false);
+			input.setEnabled(false);
 		}
 	}
 	

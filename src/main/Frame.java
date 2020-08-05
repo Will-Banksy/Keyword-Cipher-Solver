@@ -94,16 +94,18 @@ public class Frame extends JFrame {
 			
 			StringBuilder sb = new StringBuilder();
 			for(CryptoUnit u : main.units) {
-				if(u.input.getText().isBlank()) {
-					continue;
-				}
-				if(u.input.getText().toUpperCase().charAt(0) < 32) {
-					continue;
-				}
-				if(Character.isUpperCase(u.ch)) {
-					sb.append(u.input.getText().toUpperCase());
-				} else {
-					sb.append(u.input.getText().toLowerCase());
+				if(u.input.isEnabled()) {
+					if(u.input.getText().isBlank()) {
+						continue;
+					}
+					if(u.input.getText().toUpperCase().charAt(0) < 32) {
+						continue;
+					}
+					if(Character.isUpperCase(u.ch)) {
+						sb.append(u.input.getText().toUpperCase());
+					} else {
+						sb.append(u.input.getText().toLowerCase());
+					}
 				}
 				if(!Character.isLetter(u.ch)) {
 					sb.append(u.ch);
@@ -180,9 +182,9 @@ public class Frame extends JFrame {
 			});
 		}
 
-		inputDiag.repaint();
 		inputDiag.setLocationRelativeTo(this);
 		inputDiag.setVisible(true);
+		inputDiag.repaint();
 	}
 	
 	public void showOutputDialog(Main main, String str) {
@@ -213,8 +215,8 @@ public class Frame extends JFrame {
 			outputTextArea.setText(str);
 		}
 
-		outputDiag.repaint();
 		outputDiag.setVisible(true);
+		outputDiag.repaint();
 	}
 	
 	public void repaintUnits(Main main) {
