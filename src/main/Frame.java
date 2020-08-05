@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class Frame extends JFrame {
@@ -93,6 +94,9 @@ public class Frame extends JFrame {
 			
 			StringBuilder sb = new StringBuilder();
 			for(CryptoUnit u : main.units) {
+				if(u.input.getText().isBlank()) {
+					continue;
+				}
 				if(u.input.getText().toUpperCase().charAt(0) < 32) {
 					continue;
 				}
@@ -137,7 +141,9 @@ public class Frame extends JFrame {
 			c.fill = GridBagConstraints.BOTH;
 			c.weightx = 1;
 			c.weighty = 1;
-			inputDiag.add(txtArea, c);
+			
+			JScrollPane scrollPane = new JScrollPane(txtArea);
+			inputDiag.add(scrollPane, c);
 			
 			JButton cancel = new JButton("Cancel");
 			c.gridy = 1;
@@ -174,6 +180,7 @@ public class Frame extends JFrame {
 			});
 		}
 
+		inputDiag.repaint();
 		inputDiag.setLocationRelativeTo(this);
 		inputDiag.setVisible(true);
 	}
@@ -197,14 +204,16 @@ public class Frame extends JFrame {
 			c.weightx = 1;
 			c.weighty = 1;
 			c.insets = new Insets(5, 5, 5, 5);
-			outputDiag.add(outputTextArea, c);
+			
+			JScrollPane scrollPane = new JScrollPane(outputTextArea);
+			outputDiag.add(scrollPane, c);
 			
 			outputDiag.setLocationRelativeTo(this);
 		} else {
 			outputTextArea.setText(str);
-			outputTextArea.repaint();
 		}
-		
+
+		outputDiag.repaint();
 		outputDiag.setVisible(true);
 	}
 	

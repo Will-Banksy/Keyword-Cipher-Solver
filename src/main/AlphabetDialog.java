@@ -95,41 +95,81 @@ public class AlphabetDialog extends JDialog {
 			CryptoUnit unit = new CryptoUnit(Main.ALPHABET.charAt(j), main);
 			unit.input.addFocusListener(new FocusListener() {
 				@Override public void focusGained(FocusEvent arg0) {
-					unit.showSelected = true;
-					unit.repaint();
-					for(CryptoUnit u : list) {
-						if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase())) {
-							u.showSelected = true;
-							u.repaint();
-						} else {
-							u.showSelected = false;
-							u.repaint();
-						}
-					}
-					if(alphabetUnits != null) {
-						for(CryptoUnit u : alphabetUnits) {
-							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase())) {
-								u.showSelected = true;
-								u.repaint();
-							} else {
-								u.showSelected = false;
-								u.repaint();
-							}
-						}
-					}
+					main.doFocusThings(unit, true, false, (char)0);
+//					unit.showSelected = true;
+//					unit.repaint();
+//					for(CryptoUnit u : list) {
+//						// If the two units cipher (immutable) character is the same
+//						if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+//						{
+//							u.showSelected = true;
+//							u.repaint();
+//						}
+//						else
+//						{
+//							u.showSelected = false;
+//							u.repaint();
+//						}
+//						// if the two units input character is the same
+//						if(u.input.getText().equalsIgnoreCase(unit.input.getText()) && !Main.stringUnimportant(u.input.getText()))
+//						{
+//							// And their cipher character is different
+//							if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
+//							{
+//								u.showSelectedBad = true;
+//								u.repaint();
+//							}
+//							else
+//							{
+//								u.showSelectedBad = false;
+//								u.repaint();
+//							}
+//						}
+//					}
+//					if(alphabetUnits != null) {
+//						for(CryptoUnit u : alphabetUnits) {
+//							// If the two units cipher (immutable) character is the same
+//							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+//							{
+//								u.showSelected = true;
+//								u.repaint();
+//							}
+//							else
+//							{
+//								u.showSelected = false;
+//								u.repaint();
+//							}
+//							// if the two units input character is the same
+//							if(u.input.getText().equalsIgnoreCase(unit.input.getText()) && !Main.stringUnimportant(u.input.getText()))
+//							{
+//								// And their cipher character is different
+//								if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
+//								{
+//									u.showSelectedBad = true;
+//									u.repaint();
+//								}
+//								else
+//								{
+//									u.showSelectedBad = false;
+//									u.repaint();
+//								}
+//							}
+//						}
+//					}
 				}
 
 				@Override public void focusLost(FocusEvent arg0) {
-					for(CryptoUnit u : list) {
-						u.showSelected = false;
-						u.repaint();
-					}
-					if(alphabetUnits != null) {
-						for(CryptoUnit u : alphabetUnits) {
-							u.showSelected = false;
-							u.repaint();
-						}
-					}
+					main.doFocusThings(unit, false, false, (char)0);
+//					for(CryptoUnit u : list) {
+//						u.showSelected = false;
+//						u.repaint();
+//					}
+//					if(alphabetUnits != null) {
+//						for(CryptoUnit u : alphabetUnits) {
+//							u.showSelected = false;
+//							u.repaint();
+//						}
+//					}
 				}
 			});
 
@@ -138,18 +178,20 @@ public class AlphabetDialog extends JDialog {
 			{
 				@Override public void keyTyped(KeyEvent e)
 				{
+					main.doFocusThings(unit, true, true, e.getKeyChar());
+					
 					char ch = e.getKeyChar();
 					main.charMap.put(unit.ch, ch);
 					for(CryptoUnit u : list)
 					{
-						if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+						if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
 						{
 							u.repaint();
 						}
 					}
 					for(CryptoUnit u : alphabetUnits)
 					{
-						if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+						if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
 						{
 							u.repaint();
 						}
@@ -248,31 +290,34 @@ public class AlphabetDialog extends JDialog {
 		add(autoFill, c);
 		
 		getKeywords.addActionListener((actionEvent) -> {
-			ArrayList<String> possibleKeywords = new ArrayList<String>();
-			String cipherAlphabet;
-			StringBuilder sb = new StringBuilder();
-			for(CryptoUnit unit : alphabetUnits)
-			{
-				sb.append(unit.input.getText());
-			}
-			cipherAlphabet = sb.toString().toLowerCase();
-			
-			for(String str : Main.dictionary)
-			{
-				String alph = Main.GetCipherAlphabet(str, false);
-				if(cipherAlphabet.equals(alph))
-				{
-					possibleKeywords.add(str);
-				}
-			}
-			
-			sb = new StringBuilder();
-			for(String str : possibleKeywords) {
-				sb.append(str + "\n");
-			}
-			
-			//JOptionPane.showMessageDialog(main.frame, possibleKeywords);
-			showOutputDialog(main, sb.toString());
+			findKeywords(main);
+//			ArrayList<String> possibleKeywords = new ArrayList<String>();
+//			String cipherAlphabet;
+//			StringBuilder sb = new StringBuilder();
+//			for(CryptoUnit unit : alphabetUnits)
+//			{
+//				if((int)unit.input.getText().charAt(0) >= 32)
+//					sb.append(unit.input.getText());
+//			}
+//			cipherAlphabet = sb.toString().toLowerCase();
+//			
+//			for(String str : Main.dictionary)
+//			{
+//				String alph = Main.GetCipherAlphabet(str, false);
+//				if(cipherAlphabet.equals(alph))
+//				{
+//					possibleKeywords.add(str);
+//				}
+//			}
+//			
+//			sb = new StringBuilder();
+//			for(String str : possibleKeywords) {
+//				sb.append(str + "\n");
+//			}
+//			
+//			//JOptionPane.showMessageDialog(main.frame, possibleKeywords);
+//			showOutputDialog(main, sb.toString());
+//			System.out.println("SB: " + sb.toString());
 		});
 		
 		autoFill.addActionListener((actionEvent) -> {
@@ -332,14 +377,16 @@ public class AlphabetDialog extends JDialog {
 			c.weightx = 1;
 			c.weighty = 1;
 			c.insets = new Insets(5, 5, 5, 5);
-			outputDiag.add(outputTextArea, c);
+			
+			JScrollPane scrollPane = new JScrollPane(outputTextArea);
+			outputDiag.add(scrollPane, c);
 			
 			outputDiag.setLocationRelativeTo(this);
 		} else {
 			outputTextArea.setText(str);
-			outputTextArea.repaint();
 		}
-		
+
+		outputDiag.repaint();
 		outputDiag.setVisible(true);
 	}
 	
@@ -371,8 +418,24 @@ public class AlphabetDialog extends JDialog {
 				break; // Break out of looping over the cipherAlphabets - we've found a suitable candidate
 			}
 		}
+	}
+	
+	public void findKeywords(Main main) {
+		ArrayList<CharInString> alphabet = new ArrayList<CharInString>();
+		for(int i = 0; i < alphabetUnits.size(); i++) {
+			if(!alphabetUnits.get(i).input.getText().isBlank() && (int)alphabetUnits.get(i).input.getText().charAt(0) >= 32) {
+				alphabet.add(new CharInString(i, alphabetUnits.get(i).input.getText().charAt(0))); // Get first char in textbox
+			}
+		}
 		
-//		System.out.println("Autofill: " + cipAlph);
+		StringBuilder sb = new StringBuilder();
+		for(Map.Entry<String, String> entry : Main.cipherAlphabets.entrySet()) {
+			ArrayList<CharInString> cipAlph = CharInString.fromString(entry.getValue()); // Get cipher alphabet for entry as arraylist of CharInStrings
+			if(compareAgainst(alphabet, cipAlph)) { // If each textfield content in alphabetUnits is equal to what it would be in the new cipher alphabet
+				sb.append(entry.getKey() + '\n'); // Add the keyword to the StringBuilder
+			}
+		}
+		showOutputDialog(main, sb.toString());
 	}
 	
 	/**

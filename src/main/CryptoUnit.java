@@ -19,6 +19,7 @@ public class CryptoUnit extends JPanel
 	private static final long serialVersionUID = 6539788295550882565L;
 	
 	public boolean showSelected;
+	public boolean showSelectedBad;
 	public char ch;
 	public JTextField input;
 	Main main;
@@ -71,6 +72,12 @@ public class CryptoUnit extends JPanel
 		if(showSelected)
 		{
 			g2d.setColor(Color.BLUE);
+			g2d.setStroke(new BasicStroke(5));
+			g2d.drawRect(0, 0, getWidth(), getHeight());
+		}
+		else if(showSelectedBad)
+		{
+			g2d.setColor(Color.RED);
 			g2d.setStroke(new BasicStroke(5));
 			g2d.drawRect(0, 0, getWidth(), getHeight());
 		}

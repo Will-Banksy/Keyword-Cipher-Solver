@@ -114,54 +114,88 @@ public class Main
 				unit.input.addFocusListener(new FocusListener() {
 					@Override public void focusGained(FocusEvent arg0)
 					{
-						unit.showSelected = true;
-						unit.repaint();
-						for(CryptoUnit u : list)
-						{
-							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-							{
-								u.showSelected = true;
-								u.repaint();
-							}
-							else
-							{
-								u.showSelected = false;
-								u.repaint();
-							}
-						}
-						if(alphDiag.alphabetUnits != null)
-						{
-							for(CryptoUnit u : alphDiag.alphabetUnits)
-							{
-								if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
-								{
-									u.showSelected = true;
-									u.repaint();
-								}
-								else
-								{
-									u.showSelected = false;
-									u.repaint();
-								}
-							}
-						}
+						doFocusThings(unit, true, false, (char)0);
+//						unit.showSelected = true;
+//						unit.repaint();
+//						for(CryptoUnit u : list)
+//						{
+//							// If the two units cipher (immutable) character is the same
+//							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+//							{
+//								u.showSelected = true;
+//								u.repaint();
+//							}
+//							else
+//							{
+//								u.showSelected = false;
+//								u.repaint();
+//							}
+//							// if the two units input character is the same
+//							if(u.input.getText().equalsIgnoreCase(unit.input.getText()) && !Main.stringUnimportant(u.input.getText()))
+//							{
+//								// And their cipher character is different
+//								if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
+//								{
+//									u.showSelectedBad = true;
+//									u.repaint();
+//								}
+//								else
+//								{
+//									u.showSelectedBad = false;
+//									u.repaint();
+//								}
+//							}
+//						}
+//						if(alphDiag.alphabetUnits != null)
+//						{
+//							for(CryptoUnit u : alphDiag.alphabetUnits)
+//							{
+//								// If the two units cipher (immutable) character is the same
+//								if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+//								{
+//									u.showSelected = true;
+//									u.repaint();
+//								}
+//								else
+//								{
+//									u.showSelected = false;
+//									u.repaint();
+//								}
+//								// if the two units input character is the same
+//								if(u.input.getText().equalsIgnoreCase(unit.input.getText()) && !Main.stringUnimportant(u.input.getText()))
+//								{
+//									// And their cipher character is different
+//									if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
+//									{
+//										u.showSelectedBad = true;
+//										u.repaint();
+//									}
+//									else
+//									{
+//										u.showSelectedBad = false;
+//										u.repaint();
+//									}
+//								}
+//							}
+//						}
 					}
 					
 					@Override public void focusLost(FocusEvent arg0)
 					{
-						for(CryptoUnit u : list)
-						{
-							u.showSelected = false;
-							u.repaint();
-						}
-						if(alphDiag.alphabetUnits != null)
-						{
-							for(CryptoUnit u : alphDiag.alphabetUnits)
-							{
-								u.showSelected = false;
-								u.repaint();
-							}
-						}
+						doFocusThings(unit, false, false, (char)0);
+//						for(CryptoUnit u : list)
+//						{
+//							u.showSelected = false;
+//							u.repaint();
+//						}
+//						if(alphDiag.alphabetUnits != null)
+//						{
+//							for(CryptoUnit u : alphDiag.alphabetUnits)
+//							{
+//								u.showSelected = false;
+//								u.repaint();
+//							}
+//						}
 					}
 				});
 				
@@ -170,18 +204,20 @@ public class Main
 				{
 					@Override public void keyTyped(KeyEvent e)
 					{
+						doFocusThings(unit, true, true, e.getKeyChar());
+						
 						char ch = e.getKeyChar();
 						charMap.put(unit.ch, ch);
 						for(CryptoUnit u : list)
 						{
-							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
 							{
 								u.repaint();
 							}
 						}
 						for(CryptoUnit u : alphDiag.alphabetUnits)
 						{
-							if((u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+							if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch))
 							{
 								u.repaint();
 							}
@@ -387,5 +423,107 @@ public class Main
 			}
 		}
 		return possibleKeywords;
+	}
+	
+	/**
+	 * Returns true if the string is empty, blank or contains all characters that are < 32
+	 */
+	public static boolean stringUnimportant(String str) {
+		if(str.isBlank()) {
+			return true;
+		} else {
+			// Check if there's any important characters in the string
+			for(int i = 0; i < str.length(); i++) {
+				if(str.charAt(i) >= 32) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public void doFocusThings(CryptoUnit unit, boolean focusGained, boolean useNewInput, char unitNewInput) {
+		String unitInputText = useNewInput ? String.valueOf(unitNewInput) : unit.input.getText();
+		if(focusGained) {
+			unit.showSelected = true;
+			unit.repaint();
+			for(CryptoUnit u : units)
+			{
+				// If the two units cipher (immutable) character is the same
+				if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+				{
+					u.showSelected = true;
+					u.repaint();
+				}
+				else
+				{
+					u.showSelected = false;
+					u.repaint();
+				}
+				// if the two units input character is the same
+				if(u.input.getText().equalsIgnoreCase(unitInputText) && !Main.stringUnimportant(u.input.getText()))
+				{
+					// And their cipher character is different
+					if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
+					{
+						u.showSelectedBad = true;
+						u.repaint();
+					}
+					else
+					{
+						u.showSelectedBad = false;
+						u.repaint();
+					}
+				}
+			}
+			if(alphDiag.alphabetUnits != null)
+			{
+				for(CryptoUnit u : alphDiag.alphabetUnits)
+				{
+					// If the two units cipher (immutable) character is the same
+					if(Character.toLowerCase(u.ch) == Character.toLowerCase(unit.ch)) //(u.ch + "").toLowerCase().contentEquals((unit.ch + "").toLowerCase()))
+					{
+						u.showSelected = true;
+						u.repaint();
+					}
+					else
+					{
+						u.showSelected = false;
+						u.repaint();
+					}
+					// if the two units input character is the same
+					if(u.input.getText().equalsIgnoreCase(unitInputText) && !Main.stringUnimportant(u.input.getText()))
+					{
+						// And their cipher character is different
+						if(Character.toLowerCase(u.ch) != Character.toLowerCase(unit.ch))
+						{
+							u.showSelectedBad = true;
+							u.repaint();
+						}
+						else
+						{
+							u.showSelectedBad = false;
+							u.repaint();
+						}
+					}
+				}
+			}
+		} else {
+			for(CryptoUnit u : units)
+			{
+				u.showSelected = false;
+				u.showSelectedBad = false;
+				u.repaint();
+			}
+			if(alphDiag.alphabetUnits != null)
+			{
+				for(CryptoUnit u : alphDiag.alphabetUnits)
+				{
+					u.showSelected = false;
+					u.showSelectedBad = false;
+					u.repaint();
+				}
+			}
+		}
 	}
 }
