@@ -95,7 +95,7 @@ public class CryptoUnit extends JPanel
 	
 	@Override public void paintComponent(Graphics g)
 	{
-		Character displayValue = main.charMap.get(ch);
+		Character displayValue = main.charMap.get(Character.toLowerCase(ch));
 		boolean setText = false;
 		if(input.getText().isEmpty()) {
 			setText = true;
@@ -106,8 +106,6 @@ public class CryptoUnit extends JPanel
 			input.setText(String.valueOf(displayValue.charValue()));
 			input.repaint();
 		}
-		
-		super.paintComponent(g);
 		
 		Graphics2D g2d = (Graphics2D)g;
 		if(showSelected)

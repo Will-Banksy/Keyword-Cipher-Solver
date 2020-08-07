@@ -95,16 +95,17 @@ public class Frame extends JFrame {
 			StringBuilder sb = new StringBuilder();
 			for(CryptoUnit u : main.units) {
 				if(u.input.isEnabled()) {
-					if(u.input.getText().isBlank()) {
+					String str = String.valueOf(main.charMap.get(Character.toLowerCase(u.ch))); // Get the corresponding letter in the charMap
+					if(str.isBlank()) {
 						continue;
 					}
-					if(u.input.getText().toUpperCase().charAt(0) < 32) {
+					if(str.toUpperCase().charAt(0) < 32) {
 						continue;
 					}
-					if(Character.isUpperCase(u.ch)) {
-						sb.append(u.input.getText().toUpperCase());
+					if(Character.isUpperCase(u.ch)) { // We want the case of the outputted character to correspond to the case in the original ciphertext
+						sb.append(str.toUpperCase());
 					} else {
-						sb.append(u.input.getText().toLowerCase());
+						sb.append(str.toLowerCase());
 					}
 				}
 				if(!Character.isLetter(u.ch)) {

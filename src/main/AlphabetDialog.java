@@ -107,7 +107,7 @@ public class AlphabetDialog extends JDialog {
 					main.doFocusThings(unit, true, true, e.getKeyChar());
 					
 					char ch = e.getKeyChar();
-					main.charMap.put(unit.ch, ch);
+					main.charMap.put(Character.toLowerCase(unit.ch), ch);
 					for(CryptoUnit u : list)
 					{
 						if(u != unit)

@@ -130,7 +130,7 @@ public class Main
 						doFocusThings(unit, true, true, e.getKeyChar());
 						
 						char ch = e.getKeyChar();
-						charMap.put(unit.ch, ch);
+						charMap.put(Character.toLowerCase(unit.ch), ch);
 						for(CryptoUnit u : list)
 						{
 							if(u != unit)
